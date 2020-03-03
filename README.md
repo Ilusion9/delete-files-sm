@@ -1,2 +1,2 @@
-# delete-files-sm
-Delete maps and configs.
+# Description
+Delete files from server.
