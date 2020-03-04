@@ -98,6 +98,10 @@ void DeleteConfigFile(const char[] cfg)
 	char file[PLATFORM_MAX_PATH];		
 	Format(file, sizeof(file), "cfg/%s.cfg", cfg);
 
+	if (FileExists(file))
+	{
+		DeleteFile(file);
+	}
 }
 
 void DeleteMapFiles(const char[] map)
