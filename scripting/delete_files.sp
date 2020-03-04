@@ -10,6 +10,44 @@ public Plugin myinfo =
 	url = "https://github.com/Ilusion9/"
 };
 
+public void OnMapStart()
+{
+	char path[PLATFORM_MAX_PATH];
+	BuildPath(Path_SM, path, sizeof(path), "configs/delete_files.cfg");
+
+	KeyValues kv = new KeyValues("Delete Files");
+	if (!kv.ImportFromFile(path))
+	{
+		delete kv;
+		LogError("The configuration file could not be read.");
+		return;
+	}
+
+	if (!kv.JumpToKey("Configs"))
+	{
+		delete kv;
+		LogError("The configuration file is corrupt (\"Configs\" section could not be found).");
+		return;
+	}
+
+	char buffer[PLATFORM_MAX_PATH];
+	if (kv.GotoFirstSubKey(false))
+	{
+		do
+		{
+			if (!kv.GetSectionName(buffer, sizeof(buffer)))
+			{
+				continue;
+			}
+
+			DeleteConfigFile(buffer);
+
+		} while (kv.GotoNextKey(false));
+	}
+	
+	delete kv;
+}
+
 public void OnConfigsExecuted()
 {
 	char path[PLATFORM_MAX_PATH];
@@ -30,24 +68,24 @@ public void OnConfigsExecuted()
 		return;
 	}
 
-	char currentMap[PLATFORM_MAX_PATH], map[PLATFORM_MAX_PATH];
+	char currentMap[PLATFORM_MAX_PATH], buffer[PLATFORM_MAX_PATH];
 	GetCurrentMap(currentMap, sizeof(currentMap));
 
 	if (kv.GotoFirstSubKey(false))
 	{
 		do
 		{
-			if (!kv.GetSectionName(map, sizeof(map)))
+			if (!kv.GetSectionName(buffer, sizeof(buffer)))
 			{
 				continue;
 			}
 
-			if (StrEqual(map, currentMap, false))
+			if (StrEqual(buffer, currentMap, false))
 			{
 				continue;
 			}
 			
-			DeleteMapFiles(map);
+			DeleteMapFiles(buffer);
 
 		} while (kv.GotoNextKey(false));
 	}
@@ -55,23 +93,30 @@ public void OnConfigsExecuted()
 	delete kv;
 }
 
+void DeleteConfigFile(const char[] cfg)
+{
+	char file[PLATFORM_MAX_PATH];		
+	Format(file, sizeof(file), "cfg/%s.cfg", cfg);
+
+}
+
 void DeleteMapFiles(const char[] map)
 {
 	char file[PLATFORM_MAX_PATH];		
 	
-	Format(file, sizeof(file), "%s.bsp", map);
+	Format(file, sizeof(file), "maps/%s.bsp", map);
 	if (FileExists(file))
 	{
 		DeleteFile(file);
 	}
 	
-	Format(file, sizeof(file), "%s.nav", map);
+	Format(file, sizeof(file), "maps/%s.nav", map);
 	if (FileExists(file))
 	{
 		DeleteFile(file);
 	}
 	
-	Format(file, sizeof(file), "%s.jpg", map);
+	Format(file, sizeof(file), "maps/%s.jpg", map);
 	if (FileExists(file))
 	{
 		DeleteFile(file);
