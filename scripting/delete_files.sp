@@ -44,23 +44,8 @@ public void OnMapStart()
 
 		} while (kv.GotoNextKey(false));
 	}
-	
-	delete kv;
-}
 
-public void OnConfigsExecuted()
-{
-	char path[PLATFORM_MAX_PATH];
-	BuildPath(Path_SM, path, sizeof(path), "configs/delete_files.cfg");
-	
-	KeyValues kv = new KeyValues("Delete Files");
-	if (!kv.ImportFromFile(path))
-	{
-		delete kv;
-		LogError("The configuration file could not be read.");
-		return;
-	}
-
+	kv.Rewind();
 	if (!kv.JumpToKey("Maps"))
 	{
 		delete kv;
@@ -68,7 +53,7 @@ public void OnConfigsExecuted()
 		return;
 	}
 
-	char currentMap[PLATFORM_MAX_PATH], buffer[PLATFORM_MAX_PATH];
+	char currentMap[PLATFORM_MAX_PATH];
 	GetCurrentMap(currentMap, sizeof(currentMap));
 
 	if (kv.GotoFirstSubKey(false))
