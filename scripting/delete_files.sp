@@ -6,7 +6,7 @@ public Plugin myinfo =
 	name = "Delete Files",
 	author = "Ilusion9",
 	description = "Delete files from server.",
-	version = "1.0",
+	version = "1.1",
 	url = "https://github.com/Ilusion9/"
 };
 
@@ -107,20 +107,19 @@ void DeleteMapFiles(char[] mapName)
 			continue;
 		}
 		
-		// Find where the extension starts in file name
-		extPos = FindCharInString(buffer, '.', true);
-		if (extPos < 0)
-		{
-			continue;
-		}
-		
+		// Get file name without extension
 		strcopy(fileName, sizeof(fileName), buffer);
-		fileName[extPos] = 0;
+		extPos = FindCharInString(buffer, '.', true);
+		
+		if (extPos != -1)
+		{
+			fileName[extPos] = 0;
+		}
 		
 		// Check if the file belongs to the map we are looking for to delete
 		if (hasWildcard)
 		{
-			if (!strnequal(fileName, mapName, mapLen, false))
+			if (!StrNumEqual(fileName, mapName, mapLen, false))
 			{
 				continue;
 			}
@@ -146,7 +145,7 @@ void DeleteMapFiles(char[] mapName)
 	delete dir;
 }
 
-bool strnequal(const char[] str1, const char[] str2, int num, bool caseSensitive)
+bool StrNumEqual(const char[] str1, const char[] str2, int num, bool caseSensitive)
 {
 	return strncmp(str1, str2, num, caseSensitive) == 0;
 }
